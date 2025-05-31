@@ -224,38 +224,66 @@ h1 span {
     box-shadow: 0 8px 25px rgba(233, 69, 96, 0.3);
 }
 
-.volume-control {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    width: 100%;
-    max-width: 250px;
-}
-
-.volume-control i {
-    color: var(--secondary);
-    font-size: 18px;
-}
-
 .volume-control input[type="range"] {
     flex: 1;
-    height: 5px;
+    height: 6px; /* Aumentamos ligeramente el grosor */
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
-    background: rgba(255, 255, 255, 0.2);
+    background: linear-gradient(to right, 
+        var(--accent) 0%,           /* Color inicial */
+        var(--secondary) 100%       /* Color final */
+    );
     border-radius: 5px;
     outline: none;
+    cursor: pointer;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
+/* Estilo para el thumb (control deslizante) en WebKit/Blink */
 .volume-control input[type="range"]::-webkit-slider-thumb {
     -webkit-appearance: none;
-    width: 16px;
-    height: 16px;
+    width: 18px; /* Tamaño aumentado */
+    height: 18px;
     border-radius: 50%;
-    background: var(--secondary);
+    background: var(--text); /* Color del thumb */
     cursor: pointer;
-    border: 2px solid var(--dark-bg);
+    border: 3px solid var(--accent); /* Borde colorido */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    transition: all 0.2s ease;
+}
+
+/* Estilo para el thumb en Firefox */
+.volume-control input[type="range"]::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--text);
+    cursor: pointer;
+    border: 3px solid var(--accent);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Estilo para la pista en Firefox */
+.volume-control input[type="range"]::-moz-range-track {
+    height: 6px;
+    background: linear-gradient(to right, 
+        var(--accent), 
+        var(--secondary)
+    );
+    border-radius: 5px;
+    border: none;
+}
+
+/* Efecto hover para mejor interactividad */
+.volume-control input[type="range"]:hover::-webkit-slider-thumb {
+    transform: scale(1.1);
+    background: var(--secondary);
+}
+
+.volume-control input[type="range"]:hover::-moz-range-thumb {
+    transform: scale(1.1);
+    background: var(--secondary);
 }
 
 .radio-footer {

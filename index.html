@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VilarNet</title>
+    <meta name="theme-color" content="#1a1a2e">
+    <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="estilos.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <div class="radio-glass">
+            <header class="radio-header">
+                <div class="logo-container">
+                    <div class="logo-image">
+                        <img src="img/logo_1.png" alt="Logo Radio FM">
+                    </div>
+                    <h1>VilarNet<span></span></h1>
+                </div>
+                <p class="frequency">FM</p>
+            </header>
+
+            <main class="radio-main">
+                <div class="visualizer-container">
+                    <div class="sound-bars">
+                        <div class="bar"></div>
+                        <div class="bar"></div>
+                        <div class="bar"></div>
+                        <div class="bar"></div>
+                        <div class="bar"></div>
+                        <div class="bar"></div>
+                        <div class="bar"></div>
+                    </div>
+                </div>
+
+                <div class="player-controls">
+                    <div class="station-info">
+                        <h2 class="station-name">Radio Vilardevoz</h2>
+                        <p class="song-info" id="songInfo">Sábados de 9:30 a 14hs</p>
+                    </div>
+
+                    <div class="controls">
+                        <button id="playBtn" class="control-btn play-btn">
+                            <i class="fas fa-play"></i>
+                        </button>
+                        <div class="volume-control">
+                            <i class="fas fa-volume-up"></i>
+                            <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="0.7">
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+            <footer class="radio-footer">
+                <p class="status" id="statusText">En línea</p>
+                <p class="copyright">© <span id="currentYear"></span> Radio FM</p>
+            </footer>
+        </div>
+    </div>
+
+    <audio id="radioStream" preload="none">
+        <source src="https://stream.codigosur.org/RadioVilardevoz.ogg" type="audio/ogg">
+        <p>Tu navegador no admite la reproducción de audio. Prueba con Chrome, Firefox o Edge.</p>
+    </audio>
+
+    <!-- anteriormente el codigo iba asi -->
+    <!-- <audio id="radioStream" preload="none"></audio> -->
+
+
+    <script src="app.js"></script>
+</body>
+
+</html>

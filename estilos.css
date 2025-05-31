@@ -1,0 +1,312 @@
+:root {
+    --primary: #2c1c6c;
+    --secondary: #fcfc04;
+    --accent: #e94560;
+    --dark-glass: rgba(39, 50, 245, 0.8);
+    --darker: #16213e;
+    /* --darker:  #0f3460; */
+    --text: #ffffff;
+    --text-light: rgba(255, 255, 255, 0.8);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    /* background: linear-gradient(25deg, #f2f2f2 0%, #1a1a2e 100%); */
+    background: linear-gradient(135deg, #f2f2f2 0%, #1a1a2e 100%);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.logo-image {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    overflow: hidden;
+    /* border: 2px solid var(--secondary);
+    box-shadow: 0 0 10px rgba(252, 252, 4, 0.5); */
+} 
+
+.logo-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    animation: rotate 15s infinite linear;
+}
+
+@keyframes rotate {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.app-container {
+    width: 100%;
+    max-width: 450px;
+}
+
+.radio-glass {
+    background: var(--dark-glass);
+    -webkit-backdrop-filter: blur(10px); /* Chrome, Safari, Edge */
+    -moz-backdrop-filter: blur(10px);    /* Firefox */
+    backdrop-filter: blur(10px);         /* Estándar (Chrome, Firefox modernos) */
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.36);
+    overflow: hidden;
+    padding: 25px;
+    transition: all 0.3s ease;
+}
+
+.radio-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.logo-icon {
+    width: 40px;
+    height: 40px;
+    background: var(--primary);
+    color: var(--secondary);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 18px;
+}
+
+h1 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    background: linear-gradient(to right, var(--text), var(--secondary));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+h1 span {
+    font-weight: 300;
+}
+
+.frequency {
+    background: var(--darker);
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--secondary);
+}
+
+.radio-main {
+    margin-bottom: 30px;
+}
+
+.visualizer-container {
+    background: var(--darker);
+    border-radius: 15px;
+    padding: 25px;
+    margin-bottom: 25px;
+    position: relative;
+    overflow: hidden;
+}
+
+.visualizer-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        45deg,
+        transparent 25%,
+        rgba(252, 252, 4, 0.1) 25%,
+        rgba(252, 252, 4, 0.1) 50%,
+        transparent 50%,
+        transparent 75%,
+        rgba(252, 252, 4, 0.1) 75%,
+        rgba(252, 252, 4, 0.1) 100%
+    );
+    background-size: 10px 10px;
+    opacity: 0.3;
+}
+
+.sound-bars {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    height: 100px;
+    gap: 8px;
+}
+
+.bar {
+    width: 10px;
+    height: 20px;
+    background: linear-gradient(to top, var(--primary), var(--accent));
+    border-radius: 5px;
+    animation: equalize 1.5s infinite ease-in-out;
+}
+
+.bar:nth-child(1) { animation-delay: 0.1s; }
+.bar:nth-child(2) { animation-delay: 0.3s; }
+.bar:nth-child(3) { animation-delay: 0.5s; }
+.bar:nth-child(4) { animation-delay: 0.2s; }
+.bar:nth-child(5) { animation-delay: 0.4s; }
+.bar:nth-child(6) { animation-delay: 0.6s; }
+.bar:nth-child(7) { animation-delay: 0.3s; }
+
+@keyframes equalize {
+    0%, 100% { height: 20px; }
+    50% { height: 80px; }
+}
+
+.station-info {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.station-name {
+    font-size: 1.5rem;
+    margin-bottom: 5px;
+    color: var(--text);
+    font-weight: 600;
+}
+
+.song-info {
+    font-size: 1rem;
+    color: var(--text-light);
+}
+
+.controls {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.control-btn {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.play-btn {
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    color: white;
+}
+
+.play-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 25px rgba(233, 69, 96, 0.3);
+}
+
+.volume-control {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    max-width: 250px;
+}
+
+.volume-control i {
+    color: var(--secondary);
+    font-size: 18px;
+}
+
+.volume-control input[type="range"] {
+    flex: 1;
+    height: 5px;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 5px;
+    outline: none;
+}
+
+.volume-control input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--secondary);
+    cursor: pointer;
+    border: 2px solid var(--dark-bg);
+}
+
+.radio-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.8rem;
+    color: var(--text-light);
+}
+
+.status {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.status::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #4ade80;
+    display: inline-block;
+}
+
+/* Estados */
+.playing .bar {
+    animation-play-state: running;
+}
+
+.paused .bar {
+    animation-play-state: paused;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+    .radio-glass {
+        padding: 20px;
+    }
+    
+    h1 {
+        font-size: 1.5rem;
+    }
+    
+    .station-name {
+        font-size: 1.3rem;
+    }
+    
+    .control-btn {
+        width: 60px;
+        height: 60px;
+        font-size: 20px;
+    }
+}

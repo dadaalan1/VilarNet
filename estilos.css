@@ -4,7 +4,6 @@
     --accent: #e94560;
     --dark-glass: rgba(39, 50, 245, 0.8);
     --darker: #16213e;
-    /* --darker:  #0f3460; */
     --text: #ffffff;
     --text-light: rgba(255, 255, 255, 0.8);
 }
@@ -17,7 +16,6 @@
 }
 
 body {
-    /* background: linear-gradient(25deg, #f2f2f2 0%, #1a1a2e 100%); */
     background: linear-gradient(135deg, #f2f2f2 0%, #1a1a2e 100%);
     color: var(--text);
     min-height: 100vh;
@@ -27,27 +25,6 @@ body {
     padding: 20px;
 }
 
-.logo-image {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    overflow: hidden;
-    /* border: 2px solid var(--secondary);
-    box-shadow: 0 0 10px rgba(252, 252, 4, 0.5); */
-} 
-
-.logo-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    animation: rotate 15s infinite linear;
-}
-
-@keyframes rotate {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
 .app-container {
     width: 100%;
     max-width: 450px;
@@ -55,9 +32,9 @@ body {
 
 .radio-glass {
     background: var(--dark-glass);
-    -webkit-backdrop-filter: blur(10px); /* Chrome, Safari, Edge */
-    -moz-backdrop-filter: blur(10px);    /* Firefox */
-    backdrop-filter: blur(10px);         /* Estándar (Chrome, Firefox modernos) */
+    -webkit-backdrop-filter: blur(10px);
+    -moz-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
     border-radius: 20px;
     border: 1px solid rgba(255, 255, 255, 0.1);
     box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.36);
@@ -79,16 +56,25 @@ body {
     gap: 12px;
 }
 
-.logo-icon {
-    width: 40px;
-    height: 40px;
-    background: var(--primary);
-    color: var(--secondary);
+.logo-image {
+    width: 50px;
+    height: 50px;
     border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 18px;
+    overflow: hidden;
+    border: 2px solid var(--secondary);
+    box-shadow: 0 0 10px rgba(252, 252, 4, 0.5);
+}
+
+.logo-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    animation: rotate 15s infinite linear;
+}
+
+@keyframes rotate {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
 
 h1 {
@@ -98,10 +84,6 @@ h1 {
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
-}
-
-h1 span {
-    font-weight: 300;
 }
 
 .frequency {
@@ -151,29 +133,20 @@ h1 span {
     display: flex;
     justify-content: center;
     align-items: flex-end;
-    height: 100px;
-    gap: 8px;
+    height: 120px; /* Aumentamos la altura */
+    gap: 6px;
 }
 
 .bar {
-    width: 10px;
-    height: 20px;
-    background: linear-gradient(to top, var(--primary), var(--accent));
-    border-radius: 5px;
-    animation: equalize 1.5s infinite ease-in-out;
-}
-
-.bar:nth-child(1) { animation-delay: 0.1s; }
-.bar:nth-child(2) { animation-delay: 0.3s; }
-.bar:nth-child(3) { animation-delay: 0.5s; }
-.bar:nth-child(4) { animation-delay: 0.2s; }
-.bar:nth-child(5) { animation-delay: 0.4s; }
-.bar:nth-child(6) { animation-delay: 0.6s; }
-.bar:nth-child(7) { animation-delay: 0.3s; }
-
-@keyframes equalize {
-    0%, 100% { height: 20px; }
-    50% { height: 80px; }
+    width: 12px; /* Barras un poco más anchas */
+    min-height: 10%;
+    height: 20%;
+    border-radius: 6px;
+    transition: height 0.05s ease-out; /* Transición más rápida */
+    will-change: height;
+    margin: 0 1px;
+    box-shadow: 0 0 5px rgba(0,0,0,0.2);
+    transform: translateZ(0); /* Aceleración hardware */
 }
 
 .station-info {
@@ -205,6 +178,8 @@ h1 span {
     height: 70px;
     border-radius: 50%;
     border: none;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    color: white;
     cursor: pointer;
     display: flex;
     justify-content: center;
@@ -214,76 +189,41 @@ h1 span {
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
-.play-btn {
-    background: linear-gradient(135deg, var(--primary), var(--accent));
-    color: white;
-}
-
-.play-btn:hover {
+.control-btn:hover {
     transform: scale(1.05);
     box-shadow: 0 8px 25px rgba(233, 69, 96, 0.3);
 }
 
+.volume-control {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    max-width: 250px;
+}
+
+.volume-control i {
+    color: var(--secondary);
+    font-size: 18px;
+}
+
 .volume-control input[type="range"] {
     flex: 1;
-    height: 6px; /* Aumentamos ligeramente el grosor */
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-    background: linear-gradient(to right, 
-        var(--accent) 0%,           /* Color inicial */
-        var(--secondary) 100%       /* Color final */
-    );
+    height: 5px;
+    /* -webkit-appearance: none; */
+    background: rgba(255, 255, 255, 0.2);
     border-radius: 5px;
     outline: none;
-    cursor: pointer;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
-/* Estilo para el thumb (control deslizante) en WebKit/Blink */
 .volume-control input[type="range"]::-webkit-slider-thumb {
     -webkit-appearance: none;
-    width: 18px; /* Tamaño aumentado */
-    height: 18px;
+    width: 16px;
+    height: 16px;
     border-radius: 50%;
-    background: var(--text); /* Color del thumb */
-    cursor: pointer;
-    border: 3px solid var(--accent); /* Borde colorido */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-    transition: all 0.2s ease;
-}
-
-/* Estilo para el thumb en Firefox */
-.volume-control input[type="range"]::-moz-range-thumb {
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    background: var(--text);
-    cursor: pointer;
-    border: 3px solid var(--accent);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-}
-
-/* Estilo para la pista en Firefox */
-.volume-control input[type="range"]::-moz-range-track {
-    height: 6px;
-    background: linear-gradient(to right, 
-        var(--accent), 
-        var(--secondary)
-    );
-    border-radius: 5px;
-    border: none;
-}
-
-/* Efecto hover para mejor interactividad */
-.volume-control input[type="range"]:hover::-webkit-slider-thumb {
-    transform: scale(1.1);
     background: var(--secondary);
-}
-
-.volume-control input[type="range"]:hover::-moz-range-thumb {
-    transform: scale(1.1);
-    background: var(--secondary);
+    cursor: pointer;
+    border: 2px solid var(--darker);
 }
 
 .radio-footer {
@@ -294,28 +234,24 @@ h1 span {
     color: var(--text-light);
 }
 
-.status {
-    display: flex;
-    align-items: center;
-    gap: 5px;
+.status i {
+    color: #4ade80;
+    margin-right: 5px;
+    font-size: 0.7rem;
 }
 
-.status::before {
-    content: '';
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: #4ade80;
-    display: inline-block;
-}
-
-/* Estados */
-.playing .bar {
-    animation-play-state: running;
-}
-
+/* Animación de fallback más dinámica */
 .paused .bar {
-    animation-play-state: paused;
+    animation: equalize 1.2s infinite ease-in-out;
+    animation-delay: calc(var(--index) * 0.1s);
+}
+
+@keyframes equalize {
+    0%, 100% { height: 20%; }
+    20% { height: 60%; }
+    40% { height: 30%; }
+    60% { height: 80%; }
+    80% { height: 40%; }
 }
 
 /* Responsive */
@@ -325,7 +261,7 @@ h1 span {
     }
     
     h1 {
-        font-size: 1.5rem;
+        font-size: 1.2rem;
     }
     
     .station-name {

@@ -8,11 +8,10 @@ document.addEventListener('DOMContentLoaded', function() {
     const statusText = document.getElementById('statusText');
     const currentYear = document.getElementById('currentYear');
     const bars = document.querySelectorAll('.bar');
-
-
+    
     // URL del stream de radio
     const streamUrl = "https://stream.codigosur.org/RadioVilardevoz.ogg";
-    
+
     // Variables de estado
     let isPlaying = false;
     let audioContext, analyser, dataArray, source;

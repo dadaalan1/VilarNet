@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const songInfo = document.getElementById('songInfo');
     const statusText = document.getElementById('statusText');
     const currentYear = document.getElementById('currentYear');
-    const bars = document.querySelectorAll('.bar');
+    const waveRows = document.querySelectorAll('.wave-row');
     
     // URL del stream de radio
     const streamUrl = "https://stream.codigosur.org/RadioVilardevoz.ogg";
@@ -51,74 +51,56 @@ document.addEventListener('DOMContentLoaded', function() {
         } catch (error) {
             console.error('Error al configurar el analizador:', error);
             // Activar animación de fallback
-            bars.forEach(bar => {
-                bar.style.animation = 'equalize 1.5s infinite ease-in-out';
+            waveRows.forEach(row => {
+                row.querySelectorAll('.wave-bar').forEach(bar => {
+                    bar.style.animation = 'wavePulse 1.5s infinite ease-in-out';
+                });
             });
         }
     }
     
-// Nueva función updateEqualizer mejorada con getBandAverage:
+// Ecualizador con bandas distribuidas de forma logaritmica.
 function updateEqualizer() {
     if (!isPlaying || !analyser) return;
-    
+
     analyser.getByteFrequencyData(dataArray);
-    
-    // Dividimos el espectro en 7 bandas no lineales para mejor distribución
-    const frequencyBands = [
-        { start: 0, end: 2 },    // Bajos profundos
-        { start: 3, end: 10 },   // Bajos
-        { start: 11, end: 25 },  // Bajos-medios
-        { start: 26, end: 50 },  // Medios
-        { start: 51, end: 100 }, // Medios-agudos
-        { start: 101, end: 150 }, // Agudos
-        { start: 151, end: 255 }  // Agudos brillantes
-    ];
-    
-    bars.forEach((bar, i) => {
-        const band = frequencyBands[i];
-        const average = getBandAverage(analyser, dataArray, band);
-        
-        // Aplicamos escala logarítmica para mejor visualización
-        const scaledValue = Math.log1p(average) * 15;
-        const height = Math.max(10, Math.min(scaledValue, 100));
-        
-        // Suavizado más agresivo para movimiento fluido
-        const currentHeight = parseFloat(bar.style.height || '20');
-        const newHeight = currentHeight + (height - currentHeight) * 0.5; // Aumentamos el factor de suavizado
-        
-        bar.style.height = `${newHeight}%`;
-        
-        // Efecto de color dinámico
-        const hue = 240 + (i * 15) - (average / 255 * 60);
-        const saturation = 80 + (average / 255 * 20);
-        bar.style.background = `linear-gradient(to top, 
-            hsl(${hue}, ${saturation}%, 50%), 
-            var(--accent)`;
+    const totalBars = waveRows.length;
+    const totalBins = dataArray.length;
+    waveRows.forEach((row, i) => {
+        const band = getBandRange(i, totalBars, totalBins);
+        const average = getBandAverage(dataArray, band);
+        const normalized = Math.min(1, average / 255);
+        const shaped = Math.pow(normalized, 0.65);
+        const level = 0.08 + shaped * 0.92;
+
+        row.style.setProperty('--level', level.toFixed(3));
     });
-    
+
     requestAnimationFrame(updateEqualizer);
 }
 
-// Función para calcular el promedio de una banda de frecuencia (modificada para mayor dinamismo)
-function getBandAverage(analyser, dataArray, band) {
-    const start = band.start;
-    const end = band.end;
+function getBandRange(index, totalBars, totalBins) {
+    const minIndex = 2;
+    const maxIndex = Math.max(minIndex + 1, totalBins - 1);
+    const start = Math.floor(minIndex * Math.pow(maxIndex / minIndex, index / totalBars));
+    const end = Math.floor(minIndex * Math.pow(maxIndex / minIndex, (index + 1) / totalBars)) - 1;
+
+    return {
+        start: Math.max(minIndex, start),
+        end: Math.max(start, end)
+    };
+}
+
+function getBandAverage(dataArray, band) {
     let sum = 0;
     let count = 0;
-    
-    for (let i = start; i <= end; i++) {
-        // Aplicamos un pequeño ajuste para evitar valores demasiado bajos
-        sum += Math.pow(dataArray[i] / 255, 0.7) * 255;
+
+    for (let i = band.start; i <= band.end; i++) {
+        sum += dataArray[i];
         count++;
     }
-    
-    const average = sum / count;
-    
-    // Aplicamos una transformación no lineal para exagerar los picos
-    const dynamicValue = Math.pow(average / 255, 3) * 255;
-    
-    // Aseguramos que el valor esté dentro del rango válido
-    return Math.min(255, Math.max(0, dynamicValue));
+
+    return count ? sum / count : 0;
 }
     
     // Control de reproducción

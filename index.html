@@ -35,14 +35,17 @@
 
             <main class="radio-main">
                 <div class="visualizer-container">
-                    <div class="sound-bars">
-                        <div class="bar" style="--index: 0"></div>
-                        <div class="bar" style="--index: 1"></div>
-                        <div class="bar" style="--index: 2"></div>
-                        <div class="bar" style="--index: 3"></div>
-                        <div class="bar" style="--index: 4"></div>
-                        <div class="bar" style="--index: 5"></div>
-                        <div class="bar" style="--index: 6"></div>
+                    <div class="equalizer wave-eq" aria-hidden="true">
+                        <div class="wave-row" style="--index: 0"><span class="wave-bar left"></span><span class="wave-core"></span><span class="wave-bar right"></span></div>
+                        <div class="wave-row" style="--index: 1"><span class="wave-bar left"></span><span class="wave-core"></span><span class="wave-bar right"></span></div>
+                        <div class="wave-row" style="--index: 2"><span class="wave-bar left"></span><span class="wave-core"></span><span class="wave-bar right"></span></div>
+                        <div class="wave-row" style="--index: 3"><span class="wave-bar left"></span><span class="wave-core"></span><span class="wave-bar right"></span></div>
+                        <div class="wave-row" style="--index: 4"><span class="wave-bar left"></span><span class="wave-core"></span><span class="wave-bar right"></span></div>
+                        <div class="wave-row" style="--index: 5"><span class="wave-bar left"></span><span class="wave-core"></span><span class="wave-bar right"></span></div>
+                        <div class="wave-row" style="--index: 6"><span class="wave-bar left"></span><span class="wave-core"></span><span class="wave-bar right"></span></div>
+                        <div class="wave-row" style="--index: 7"><span class="wave-bar left"></span><span class="wave-core"></span><span class="wave-bar right"></span></div>
+                        <div class="wave-row" style="--index: 8"><span class="wave-bar left"></span><span class="wave-core"></span><span class="wave-bar right"></span></div>
+                        <div class="wave-row" style="--index: 9"><span class="wave-bar left"></span><span class="wave-core"></span><span class="wave-bar right"></span></div>
                     </div>
                 </div>
 
@@ -72,7 +75,7 @@
     </div>
 
     <audio id="radioStream" crossorigin="anonymous" preload="none">
-        <source src="https://stream.codigosur.org/RadioVilardevoz.ogg" type="audio/ogg">
+        <source src="https://icecast2.innovanexo.com:9000/radiocero.mp3" type="audio/mpeg">
         <p>Tu navegador no soporta el elemento de audio.</p>
     </audio>
 

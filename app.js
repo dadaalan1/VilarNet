@@ -202,4 +202,27 @@ function getBandAverage(dataArray, band) {
             songInfo.textContent = randomProgram;
         }
     }, 30000);
+
+    // Cambiar color del ecualizador aleatoriamente
+    const colors = [
+        { main: '#ff0000', shadow: 'rgba(255, 0, 0, 0.6)', trans: 'rgba(255, 0, 0, 0.2)' }, // Rojo
+        { main: '#00ff00', shadow: 'rgba(0, 255, 0, 0.6)', trans: 'rgba(0, 255, 0, 0.2)' }, // Verde
+        { main: '#00FFFF', shadow: 'rgba(0, 255, 255, 0.6)', trans: 'rgba(0, 255, 255, 0.2)' }, // Cian
+        { main: '#FFD700', shadow: 'rgba(255, 215, 0, 0.6)', trans: 'rgba(255, 215, 0, 0.2)' }, // Amarillo Fuerte (Gold)
+        { main: '#FFFFFF', shadow: 'rgba(255, 255, 255, 0.6)', trans: 'rgba(255, 255, 255, 0.2)' },  // Blanco
+        { main: '#CC5500', shadow: 'rgba(204, 85, 0, 0.6)', trans: 'rgba(204, 85, 0, 0.2)' }  // Naranja Oscuro
+    ];
+    let currentColorIndex = 0;
+
+    function changeEqualizerColor() {
+        const color = colors[currentColorIndex];
+        document.documentElement.style.setProperty('--equalizer-color', color.main);
+        document.documentElement.style.setProperty('--equalizer-color-shadow', color.shadow);
+        document.documentElement.style.setProperty('--equalizer-color-trans', color.trans);
+        
+        currentColorIndex = (currentColorIndex + 1) % colors.length;
+    }
+
+    setInterval(changeEqualizerColor, 3000); // Cambia de color cada 3 segundos
+    changeEqualizerColor(); // Establece un color inicial
 });

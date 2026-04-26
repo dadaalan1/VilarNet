@@ -223,6 +223,6 @@ function getBandAverage(dataArray, band) {
         currentColorIndex = (currentColorIndex + 1) % colors.length;
     }
 
-    setInterval(changeEqualizerColor, 3000); // Cambia de color cada 3 segundos
+    setInterval(changeEqualizerColor, 10000); // Cambia de color cada 10 segundos
     changeEqualizerColor(); // Establece un color inicial
 });

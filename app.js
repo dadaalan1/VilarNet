@@ -21,6 +21,9 @@ document.addEventListener('DOMContentLoaded', function() {
     let audioContext, analyser, dataArray, source;
     const volumeStep = 10;
     const optimalVolume = 70;
+    const connectionTimeoutMs = 12000;
+    let connectionTimeoutId = null;
+    let pendingPlaybackState = null;
     
     // Inicialización
     currentYear.textContent = new Date().getFullYear();
@@ -108,32 +111,92 @@ function getBandAverage(dataArray, band) {
 
     return count ? sum / count : 0;
 }
+
+    function clearConnectionTimeout() {
+        if (connectionTimeoutId) {
+            clearTimeout(connectionTimeoutId);
+            connectionTimeoutId = null;
+        }
+    }
+
+    function savePlaybackState() {
+        pendingPlaybackState = {
+            songInfo: songInfo.textContent,
+            statusHtml: statusText.innerHTML,
+            isPlaying
+        };
+    }
+
+    function restorePlaybackState() {
+        if (!pendingPlaybackState) {
+            return;
+        }
+
+        songInfo.textContent = pendingPlaybackState.songInfo;
+        statusText.innerHTML = pendingPlaybackState.statusHtml;
+        isPlaying = pendingPlaybackState.isPlaying;
+        updateControlsState();
+        pendingPlaybackState = null;
+    }
+
+    function confirmPlaybackStarted() {
+        if (!pendingPlaybackState) {
+            return;
+        }
+
+        clearConnectionTimeout();
+        pendingPlaybackState = null;
+        isPlaying = true;
+        updateControlsState();
+        songInfo.textContent = "Transmitiendo en vivo";
+        statusText.innerHTML = '<i class="fas fa-circle"></i> Reproduciendo';
+
+        if (!audioContext) {
+            setupAudioAnalyzer();
+        }
+
+        updateEqualizer();
+    }
+
+    function handlePlaybackFailure(error, shouldAlert = false) {
+        console.error('Error al reproducir:', error);
+        clearConnectionTimeout();
+        audio.pause();
+        audio.load();
+        restorePlaybackState();
+
+        if (shouldAlert) {
+            alert('Por favor haz clic en el botón de play para iniciar la reproducción');
+        }
+    }
+
+    function startConnectionTimeout() {
+        clearConnectionTimeout();
+        connectionTimeoutId = setTimeout(() => {
+            handlePlaybackFailure(new Error('Tiempo de espera agotado'));
+        }, connectionTimeoutMs);
+    }
     
     function playRadio() {
+        savePlaybackState();
+        isPlaying = true;
+        updateControlsState();
         songInfo.textContent = "Conectando...";
         statusText.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Conectando';
+        startConnectionTimeout();
 
         audio.play().then(() => {
-            isPlaying = true;
-            updateControlsState();
-            songInfo.textContent = "Transmitiendo en vivo";
-            statusText.innerHTML = '<i class="fas fa-circle"></i> Reproduciendo';
-            
-            if (!audioContext) {
-                setupAudioAnalyzer();
+            if (!audio.paused && audio.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) {
+                confirmPlaybackStarted();
             }
-            updateEqualizer();
         }).catch(error => {
-            console.error('Error al reproducir:', error);
-            songInfo.textContent = "Haz clic para iniciar";
-            statusText.innerHTML = '<i class="fas fa-exclamation-circle"></i> Click para play';
-            
-            // Solución para políticas de autoplay
-            alert('Por favor haz clic en el botón de play para iniciar la reproducción');
+            handlePlaybackFailure(error, error.name === 'NotAllowedError');
         });
     }
     
     function pauseRadio() {
+        clearConnectionTimeout();
+        pendingPlaybackState = null;
         audio.pause();
         isPlaying = false;
         updateControlsState();
@@ -143,19 +206,20 @@ function getBandAverage(dataArray, band) {
     
     function reconnectRadio() {
         const resumeAfterReconnect = isPlaying;
+        savePlaybackState();
         audio.pause();
         audio.load();
         songInfo.textContent = 'Reconectando...';
         statusText.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Reconectando';
 
         if (resumeAfterReconnect) {
+            startConnectionTimeout();
             audio.play().then(() => {
-                statusText.innerHTML = '<i class="fas fa-circle"></i> Reproduciendo';
-                songInfo.textContent = 'Transmitiendo en vivo';
+                if (!audio.paused && audio.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) {
+                    confirmPlaybackStarted();
+                }
             }).catch(error => {
-                console.error('Error al reconectar:', error);
-                statusText.innerHTML = '<i class="fas fa-exclamation-circle"></i> Error al reconectar';
-                songInfo.textContent = 'No se pudo reconectar';
+                handlePlaybackFailure(error);
             });
         }
     }
@@ -209,15 +273,17 @@ function getBandAverage(dataArray, band) {
     // Manejo de errores de red
     audio.addEventListener('error', function() {
         console.error('Error de audio:', audio.error);
-        statusText.innerHTML = '<i class="fas fa-exclamation-circle"></i> Error de conexión';
-        songInfo.textContent = "Error al conectar con la radio";
         
         // Intentar reconectar después de 5 segundos
         if (isPlaying) {
             setTimeout(() => {
                 reconnectRadio();
             }, 5000);
+            return;
         }
+
+        clearConnectionTimeout();
+        restorePlaybackState();
     });
     
     // Detectar cambios en la conexión
@@ -229,6 +295,9 @@ function getBandAverage(dataArray, band) {
     window.addEventListener('offline', () => {
         statusText.innerHTML = '<i class="fas fa-circle"></i> Sin conexión';
     });
+
+    audio.addEventListener('playing', confirmPlaybackStarted);
+    audio.addEventListener('canplay', confirmPlaybackStarted);
     
     // Simular cambios de programa
     setInterval(() => {

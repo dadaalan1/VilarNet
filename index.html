@@ -56,12 +56,30 @@
                     </div>
 
                     <div class="controls">
-                        <button id="playBtn" class="control-btn play-btn">
-                            <i class="fas fa-play"></i>
-                        </button>
-                        <div class="volume-control">
-                            <i class="fas fa-volume-up" id="volumeIcon"></i>
-                            <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="0.7">
+                        <div class="controls-row controls-row-main">
+                            <button id="playBtn" class="control-btn action-btn">
+                                <i class="fas fa-play"></i>
+                                <span>Reproducir</span>
+                            </button>
+                            <button id="pauseBtn" class="control-btn action-btn">
+                                <i class="fas fa-pause"></i>
+                                <span>Pausa</span>
+                            </button>
+                        </div>
+                        <p class="volume-status" id="volumeStatus">Volumen actual: 70%</p>
+                        <div class="controls-row controls-row-volume">
+                            <button id="volumeDownBtn" class="control-btn action-btn volume-btn">
+                                <i class="fas fa-volume-down"></i>
+                                <span>Vol -</span>
+                            </button>
+                            <button id="volumeDefaultBtn" class="control-btn action-btn volume-btn">
+                                <i class="fas fa-volume-up" id="volumeIcon"></i>
+                                <span>Vol optimo</span>
+                            </button>
+                            <button id="volumeUpBtn" class="control-btn action-btn volume-btn">
+                                <i class="fas fa-volume-high"></i>
+                                <span>Vol +</span>
+                            </button>
                         </div>
                     </div>
                 </div>

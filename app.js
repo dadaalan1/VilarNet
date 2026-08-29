@@ -2,8 +2,12 @@ document.addEventListener('DOMContentLoaded', function() {
     // Elementos del DOM
     const audio = document.getElementById('radioStream');
     const playBtn = document.getElementById('playBtn');
-    const volumeSlider = document.getElementById('volumeSlider');
+    const pauseBtn = document.getElementById('pauseBtn');
+    const volumeDownBtn = document.getElementById('volumeDownBtn');
+    const volumeDefaultBtn = document.getElementById('volumeDefaultBtn');
+    const volumeUpBtn = document.getElementById('volumeUpBtn');
     const volumeIcon = document.getElementById('volumeIcon');
+    const volumeStatus = document.getElementById('volumeStatus');
     const songInfo = document.getElementById('songInfo');
     const statusText = document.getElementById('statusText');
     const currentYear = document.getElementById('currentYear');
@@ -15,10 +19,12 @@ document.addEventListener('DOMContentLoaded', function() {
     // Variables de estado
     let isPlaying = false;
     let audioContext, analyser, dataArray, source;
+    const volumeStep = 10;
+    const optimalVolume = 70;
     
     // Inicialización
     currentYear.textContent = new Date().getFullYear();
-    audio.volume = volumeSlider.value;
+    audio.volume = optimalVolume / 100;
     
     // Configurar analizador de audio
     function setupAudioAnalyzer() {
@@ -103,19 +109,13 @@ function getBandAverage(dataArray, band) {
     return count ? sum / count : 0;
 }
     
-    // Control de reproducción
-    function togglePlay() {
-        if (isPlaying) {
-            pauseRadio();
-        } else {
-            playRadio();
-        }
-    }
-    
     function playRadio() {
+        songInfo.textContent = "Conectando...";
+        statusText.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Conectando';
+
         audio.play().then(() => {
             isPlaying = true;
-            updatePlayButton();
+            updateControlsState();
             songInfo.textContent = "Transmitiendo en vivo";
             statusText.innerHTML = '<i class="fas fa-circle"></i> Reproduciendo';
             
@@ -136,21 +136,38 @@ function getBandAverage(dataArray, band) {
     function pauseRadio() {
         audio.pause();
         isPlaying = false;
-        updatePlayButton();
+        updateControlsState();
         songInfo.textContent = "En pausa";
         statusText.innerHTML = '<i class="fas fa-circle"></i> En pausa';
     }
     
-    function updatePlayButton() {
-        playBtn.innerHTML = isPlaying ? '<i class="fas fa-pause"></i>' : '<i class="fas fa-play"></i>';
+    function reconnectRadio() {
+        const resumeAfterReconnect = isPlaying;
+        audio.pause();
+        audio.load();
+        songInfo.textContent = 'Reconectando...';
+        statusText.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Reconectando';
+
+        if (resumeAfterReconnect) {
+            audio.play().then(() => {
+                statusText.innerHTML = '<i class="fas fa-circle"></i> Reproduciendo';
+                songInfo.textContent = 'Transmitiendo en vivo';
+            }).catch(error => {
+                console.error('Error al reconectar:', error);
+                statusText.innerHTML = '<i class="fas fa-exclamation-circle"></i> Error al reconectar';
+                songInfo.textContent = 'No se pudo reconectar';
+            });
+        }
+    }
+
+    function updateControlsState() {
+        playBtn.classList.toggle('playing', isPlaying);
+        pauseBtn.classList.toggle('playing', !isPlaying);
     }
     
     // Control de volumen
-    function updateVolume() {
-        audio.volume = volumeSlider.value;
-        
-        // Actualizar icono de volumen
-        if (audio.volume == 0) {
+    function updateVolumeIcon() {
+        if (audio.volume === 0) {
             volumeIcon.className = 'fas fa-volume-mute';
         } else if (audio.volume < 0.5) {
             volumeIcon.className = 'fas fa-volume-down';
@@ -158,10 +175,36 @@ function getBandAverage(dataArray, band) {
             volumeIcon.className = 'fas fa-volume-up';
         }
     }
+
+    function updateVolumeStatus() {
+        volumeStatus.textContent = `Volumen actual: ${Math.round(audio.volume * 100)}%`;
+    }
+
+    function setVolumePercent(value) {
+        const normalizedPercent = Math.max(0, Math.min(100, value));
+        audio.volume = normalizedPercent / 100;
+        updateVolumeIcon();
+        updateVolumeStatus();
+    }
+
+    function decreaseVolume() {
+        setVolumePercent(Math.round(audio.volume * 100) - volumeStep);
+    }
+
+    function setOptimalVolume() {
+        setVolumePercent(optimalVolume);
+    }
+
+    function increaseVolume() {
+        setVolumePercent(Math.round(audio.volume * 100) + volumeStep);
+    }
     
     // Event listeners
-    playBtn.addEventListener('click', togglePlay);
-    volumeSlider.addEventListener('input', updateVolume);
+    playBtn.addEventListener('click', playRadio);
+    pauseBtn.addEventListener('click', pauseRadio);
+    volumeDownBtn.addEventListener('click', decreaseVolume);
+    volumeDefaultBtn.addEventListener('click', setOptimalVolume);
+    volumeUpBtn.addEventListener('click', increaseVolume);
     
     // Manejo de errores de red
     audio.addEventListener('error', function() {
@@ -172,8 +215,7 @@ function getBandAverage(dataArray, band) {
         // Intentar reconectar después de 5 segundos
         if (isPlaying) {
             setTimeout(() => {
-                audio.src = audio.src; // Recargar fuente
-                audio.play().catch(e => console.log('Reintento fallido:', e));
+                reconnectRadio();
             }, 5000);
         }
     });
@@ -203,14 +245,18 @@ function getBandAverage(dataArray, band) {
         }
     }, 30000);
 
-    // Cambiar color del ecualizador aleatoriamente
+    // Cambiar color del ecualizador con una rotacion mas amplia y suave.
     const colors = [
-        { main: '#ff0000', shadow: 'rgba(255, 0, 0, 0.6)', trans: 'rgba(255, 0, 0, 0.2)' }, // Rojo
-        { main: '#00ff00', shadow: 'rgba(0, 255, 0, 0.6)', trans: 'rgba(0, 255, 0, 0.2)' }, // Verde
-        { main: '#00FFFF', shadow: 'rgba(0, 255, 255, 0.6)', trans: 'rgba(0, 255, 255, 0.2)' }, // Cian
-        { main: '#FFD700', shadow: 'rgba(255, 215, 0, 0.6)', trans: 'rgba(255, 215, 0, 0.2)' }, // Amarillo Fuerte (Gold)
-        { main: '#FFFFFF', shadow: 'rgba(255, 255, 255, 0.6)', trans: 'rgba(255, 255, 255, 0.2)' },  // Blanco
-        { main: '#CC5500', shadow: 'rgba(204, 85, 0, 0.6)', trans: 'rgba(204, 85, 0, 0.2)' }  // Naranja Oscuro
+        { main: '#ff5f6d', shadow: 'rgba(255, 95, 109, 0.62)', trans: 'rgba(255, 95, 109, 0.18)' },
+        { main: '#ffc371', shadow: 'rgba(255, 195, 113, 0.6)', trans: 'rgba(255, 195, 113, 0.2)' },
+        { main: '#ffe066', shadow: 'rgba(255, 224, 102, 0.6)', trans: 'rgba(255, 224, 102, 0.2)' },
+        { main: '#7dffb3', shadow: 'rgba(125, 255, 179, 0.62)', trans: 'rgba(125, 255, 179, 0.2)' },
+        { main: '#29f0ff', shadow: 'rgba(41, 240, 255, 0.62)', trans: 'rgba(41, 240, 255, 0.2)' },
+        { main: '#5b8cff', shadow: 'rgba(91, 140, 255, 0.62)', trans: 'rgba(91, 140, 255, 0.2)' },
+        { main: '#8f7cff', shadow: 'rgba(143, 124, 255, 0.62)', trans: 'rgba(143, 124, 255, 0.2)' },
+        { main: '#d47cff', shadow: 'rgba(212, 124, 255, 0.62)', trans: 'rgba(212, 124, 255, 0.2)' },
+        { main: '#ff89c6', shadow: 'rgba(255, 137, 198, 0.62)', trans: 'rgba(255, 137, 198, 0.2)' },
+        { main: '#ffffff', shadow: 'rgba(255, 255, 255, 0.56)', trans: 'rgba(255, 255, 255, 0.18)' }
     ];
     let currentColorIndex = 0;
 
@@ -225,4 +271,7 @@ function getBandAverage(dataArray, band) {
 
     setInterval(changeEqualizerColor, 10000); // Cambia de color cada 10 segundos
     changeEqualizerColor(); // Establece un color inicial
+    updateControlsState();
+    updateVolumeIcon();
+    updateVolumeStatus();
 });

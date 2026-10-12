@@ -124,7 +124,7 @@ h1 {
     font-size: 0.8rem;
     text-align: center;
     color: var(--text);
-    margin-bottom: 5px;
+    margin-bottom: 20px;
 }
 
 .visualizer-container {
@@ -428,11 +428,11 @@ h1 {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: clamp(28px, 6vw, 34px);
-    height: clamp(28px, 6vw, 34px);
+    width: clamp(36px, 8vw, 44px);
+    height: clamp(36px, 8vw, 44px);
     background: none;
     color: #ffffff;
-    font-size: clamp(1rem, 3vw, 1.3rem);
+    font-size: clamp(1.4rem, 4vw, 1.8rem);
     opacity: 0.85;
     text-decoration: none;
     transition: opacity 0.2s ease, transform 0.2s ease;
